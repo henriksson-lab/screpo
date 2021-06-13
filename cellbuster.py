@@ -2,6 +2,21 @@ import requests
 import sys
 import pandas as pd
 from io import StringIO
+from tqdm import tqdm
+import urllib
+
+class DownloadProgressBar(tqdm):
+    def update_to(self, b=1, bsize=1, tsize=None):
+        if tsize is not None:
+            self.total = tsize
+        self.update(b * bsize - self.n)
+def download_url(url, output_path):
+    with DownloadProgressBar(unit='B', unit_scale=True,
+                             miniters=1, desc=url.split('/')[-1]) as t:
+        urllib.request.urlretrieve(url, filename=output_path, reporthook=t.update_to)
+
+
+
 
 
 def listAE():
@@ -35,7 +50,19 @@ def getmetaAE(datasetid):
     print(df)
     print(df.columns)
 
-    df['Comment[read1 file]', 'Comment[FASTQ_URI]'
+    list_file_r1=['ftp://ftp.ebi.ac.uk/pub/databases/microarray/data/experiment/MTAB/'+datasetid+'/'+x for x in df['Comment[read1 file]'].tolist()]
+    list_file_r2=['ftp://ftp.ebi.ac.uk/pub/databases/microarray/data/experiment/MTAB/'+datasetid+'/'+x for x in df['Comment[read2 file]'].tolist()]
+    list_file_i1=['ftp://ftp.ebi.ac.uk/pub/databases/microarray/data/experiment/MTAB/'+datasetid+'/'+x for x in df['Comment[index1 file]'].tolist()]
+
+    for i in range(0,len(df.index)):
+        print(i)
+        download_one10x("tofolder", list_file_r1[i], list_file_r2[i], list_file_i1[i])
+
+
+
+def download_one10x(tofolder, file_r1, file_r2, file_i1):
+    print(file_r1)
+    download_url(file_r1, "/tmp/test")
 
 #what files there are:
 #https://www.ebi.ac.uk/arrayexpress/experiments/E-MTAB-7316/files/
@@ -47,6 +74,9 @@ def getmetaAE(datasetid):
 #Comment[index1 file]
 ### for some crazy reason there is FASTQ_URI after each comment... non-unique column
 
+def runCellRanger(datasetid,localcores=8,expectcells=5000):
+    #run cellranger on a locally existing dataset
+    print("foo")
 
 def download(datasetid):
     getmetaAE(datasetid)
@@ -57,13 +87,19 @@ def printHelp():
   CellBuster - a framework for single-cell raw data retrieval and reprocessing
   ============================================================================
 
-  update              Update the list of available datasets (not sure if needed)
+  update                 Update the list of available datasets (not sure if needed)
 
-  listdownloads       List possible datasets to download
+  listdownloads          List possible datasets to download
 
-  download DATASET    Download a dataset
+  listlocal              List locally available datasets
 
+  push SERVER DATASET    Push a dataset to a remote reposity.
+  pull SERVER DATASET    Pull a dataset from a remote reposity.
+  pushall SERVER
+  pullall SERVER
+                         SERVER is in scp format, user@server:/pathtodir
 
+  download DATASET       Download a dataset
 """)
 
 
