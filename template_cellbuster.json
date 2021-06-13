@@ -1,0 +1,11 @@
+{
+"genomes_10x":{
+	"Homo_sapiens":"/sw/data/Chromium/cellranger-data/2020-A/refdata-gex-GRCh38-2020-A",
+	"Mus_musculus":"/sw/data/Chromium/cellranger-data/2020-A/refdata-gex-mm10-2020-A"
+},
+"localrepo":"/corgi/cellbuster/",
+"extrepos":{
+	"uppmax":"mahogny@rackham.uppmax.uu.se:/home/mahogny/mystore/cellbuster"
+},
+"pyega3config":"~/.ega.json"
+}

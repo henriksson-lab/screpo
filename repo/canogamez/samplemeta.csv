@@ -1,0 +1,17 @@
+experimental_condition,cell_type,time_point,_10xsampleid
+Th0,CD4_T_naive,5_days,I1456
+Th0,CD4_T_memory,5_days,I1457
+Th2,CD4_T_naive,5_days,I1458
+Th2,CD4_T_memory,5_days,I1459
+iTreg,CD4_T_naive,5_days,I1460
+iTreg,CD4_T_memory,5_days,I1461
+Th17,CD4_T_naive,5_days,I1462
+Th17,CD4_T_memory,5_days,I1463
+Th0,CD4_T_memory,5_days,I1464
+unstimulated,CD4_T_naive,5_days,I1465
+unstimulated,CD4_T_memory,5_days,I1466
+unstimulated,CD4_T_memory,5_days,I1467
+iTreg,CD4_T_naive,5_days,I1468
+iTreg,CD4_T_memory,5_days,I1469
+Th17,CD4_T_naive,5_days,I1470
+Th17,CD4_T_memory,5_days,I1471
