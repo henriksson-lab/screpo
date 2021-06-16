@@ -6,14 +6,15 @@ from tqdm import tqdm
 import urllib
 from pysradb import cli
 import util
+import GEOparse
 
 
-#for testing
-def main():
-    print(666)
-    cli.parse_args("metadata GSE174786")
+def cellbuster_geo():
+    gse = GEOparse.get_GEO(geo="GSE174786", destdir="./")
+
+    gse.download_SRA("debojyoti.das@umu.se")
+    download_supplementary_files()
+
 
 if __name__ == "__main__":
-    main()
-
-
+    cellbuster_geo()
