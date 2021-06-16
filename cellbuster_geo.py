@@ -13,7 +13,7 @@ def cellbuster_geo():
     gse = GEOparse.get_GEO(geo="GSE174786", destdir="./")
 
     gse.download_SRA("debojyoti.das@umu.se")
-    download_supplementary_files()
+    gse.download_supplementary_files()
 
 
 if __name__ == "__main__":
