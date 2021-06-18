@@ -36,7 +36,7 @@ def downloadAE(datasetid: str):
         else:
             return c
 
-    print(subcond)
+    print(df)
 
     #Clean up metadata
     subcond = df[[x for x in df.columns if keepColumn(x)]]
@@ -136,3 +136,5 @@ if __name__ == "__main__":
     main()
 
 
+
+#ERS2852886   for a sample... wut?

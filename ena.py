@@ -29,17 +29,6 @@ def getRunInfo(id):
 
 print(getRunInfo("SRP312953"))
 
-def prefetch(ids, outdir):
-    subprocess.call(["prefetch", "--output-directory", outdir]+ids, shell=True)
-
-def fasterqDumpSplit():
-    subprocess.call(["fasterq-dump", "--output-directory", outdir]+ids, shell=True)
-
-#    fasterq - dump
-#prefetch SRR14121712 --output-directory temp
-#goes to ./temp/SRR14121712/SRR14121712.sra
-#but several aux files... better to not set output dir?
-
 ##################################################
 
 #curl -v "https://trace.ncbi.nlm.nih.gov/Traces/sra/sra.cgi?save=efetch&db=sra&rettype=runinfo&term=SRR000001"
@@ -62,3 +51,9 @@ def fasterqDumpSplit():
 #wget "https://www.ebi.ac.uk/ena/browser/api/xml/ERR3510662"
 #wget "https://www.ebi.ac.uk/ena/portal/api/filereport?accession=ERR3510662&result=read_run&fields=run_accession,submitted_ftp,submitted_md5,submitted_bytes,submitted_format"
 #wget "ftp.sra.ebi.ac.uk/vol1/run/ERR351/ERR3510662/SM1_S1_L004.bam"
+
+
+########################################################
+# assume we have the id "ERS2852885" --- now what?
+
+
