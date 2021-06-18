@@ -1,17 +1,17 @@
 import requests
-import sys
 import pandas as pd
 from io import StringIO
-from tqdm import tqdm
-import urllib
 
-
+import data
 import util
-
+import config
+import ena
 
 ################################
-#try out: E-MTAB-7316
-def getmetaAE(datasetid):
+# Download one dataset from ArrayExpress
+def downloadAE(datasetid: str):
+
+    datasetdir = config.getDatasetDir(datasetid)
 
     r = requests.get('https://www.ebi.ac.uk/arrayexpress/json/v3/files/E-MTAB-7316')
     dat = r.json()
@@ -19,35 +19,51 @@ def getmetaAE(datasetid):
     filemeta="https://www.ebi.ac.uk/arrayexpress/files/"+datasetid+"/"+datasetid+".sdrf.txt"
     r = requests.get(filemeta).content.decode('utf-8')
     df = pd.read_csv(StringIO(r), sep="\t")
+
+    #Remove columns with metadata likely not of interest
+    def keepColumn(c: str):
+        listBadCol = ["URI","file","File","NOMINAL_SDEV", "NOMINAL_LENGTH","Performer","Protocol REF",
+                      "LIBRARY_LAYOUT", "LIBRARY_SELECTION", "LIBRARY_SOURCE","LIBRARY_STRAND",
+                      "Technology Type","SPOT_LENGTH","barcode","cDNA","umi","ENA_","Scan Name","primer",
+                      "single cell isolation","BioSD_SAMPLE","input molecule","end bias","Material Type","cell number"]
+        return not any([x in c for x in listBadCol])
+
+    #Rename columns to something sensible. foo[x] => x
+    def cleanColumnName(c: str):
+        if "]" in c:
+            return c.split("[")[1].split("]")[0]
+        else:
+            return c
+
+    data.writeDatasetDF(datasetid, df, "samplemeta.csv.ae")
     print(df)
-    print(df.columns)
 
-    list_file_r1=['ftp://ftp.ebi.ac.uk/pub/databases/microarray/data/experiment/MTAB/'+datasetid+'/'+x for x in df['Comment[read1 file]'].tolist()]
-    list_file_r2=['ftp://ftp.ebi.ac.uk/pub/databases/microarray/data/experiment/MTAB/'+datasetid+'/'+x for x in df['Comment[read2 file]'].tolist()]
-    list_file_i1=['ftp://ftp.ebi.ac.uk/pub/databases/microarray/data/experiment/MTAB/'+datasetid+'/'+x for x in df['Comment[index1 file]'].tolist()]
+    #Write metadata
+    #data.writeDatasetMeta(datasetid, df)
+    #data.writeDatasetMeta(datasetid, subcond)
+    subcond = df[[x for x in df.columns if keepColumn(x)]]
+    subcond = subcond.rename(cleanColumnName, axis='columns')
+    #subcond=cond[["experimental_condition","cell_type","time_point"]].copy()
+    #subcond["_10xsampleid"] = subcond["sample_id"]
+    subcond_red=subcond.drop_duplicates()
+    data.writeDatasetMeta(datasetid, subcond_red)
 
+    #Clean up metadata
+    print(subcond)
+
+
+    #Download the files
+    ena_samples = df['Comment[ENA_SAMPLE]']  #ERR records that we want
+    list_sampleid = df["Source Name"]
+    tempdir = util.getTempDir()
     for i in range(0,len(df.index)):
-        print(i)
-        download_one10x("tofolder", list_file_r1[i], list_file_r2[i], list_file_i1[i])
-
-
-################################
-#
-def download_one10x(tofolder, file_r1, file_r2, file_i1):
-    print(file_r1)
-    util.download_url(file_r1, "/tmp/test")
-
-#what files there are:
-#https://www.ebi.ac.uk/arrayexpress/experiments/E-MTAB-7316/files/
-#https://www.ebi.ac.uk/arrayexpress/files/E-MTAB-7316/E-MTAB-7316.sdrf.txt
-
-#### can extract these 
-#Comment[read1 file]    
-#Comment[read2 file]
-#Comment[index1 file]
-### for some crazy reason there is FASTQ_URI after each comment... non-unique column
-
-
+        fname = ena.downloadEnaERR(ena_samples[i], tempdir)
+        print(fname)
+        df = pd.DataFrame(data={
+            "_filename": [fname],
+            "_10xsampleid": [list_sampleid[i]})
+        util.smartmergeFilesFor10x(tempdir, df)
+        #TODO this does not use the fact that there may be multiple files
 
 
 
@@ -59,7 +75,7 @@ class LoaderAE:
         self.desc=desc
 
     def download(self):
-        getmetaAE(self.datasetid)
+        downloadAE(self.datasetid)
 
 
 
@@ -83,16 +99,18 @@ def populateListOfDatasets(list_of_datasets):
             #Only consider 10x technologies
             if len(set_10x_tech.intersection(set(exp["technologyType"])))>0:
                 #print(expid+"\t\t"+str(cellcount)+"\t\t "+expdesc)
-                list_of_datasets[expid]=LoaderAE(expid,expdesc+" ("+str(cellcount)+")")
+                list_of_datasets[expid]=LoaderAE(expid,expdesc+" ("+exp["species"]+","+str(cellcount)+")")
 
 
 
 #for testing
 def main():
-    print(666)
-    getmetaAE("E-MTAB-7316")
+    util.fake_download=True
+    downloadAE("E-MTAB-7316")
 
 if __name__ == "__main__":
     main()
 
 
+
+#ERS2852886   for a sample... wut?

@@ -1,6 +1,5 @@
 import config
 import pandas as pd
-from pathlib import Path
 
 ################################
 # Read the sample meta for a dataset
@@ -16,6 +15,12 @@ def writeDatasetMeta(datasetid, dat):
     ds.mkdir(parents=True,exist_ok=True)
     dat.to_csv(ds / "samplemeta.csv", index=False)
 
+################################
+# Write a special dataframe for a dataset
+def writeDatasetDF(datasetid, dat, filename: str):
+    ds = config.getDatasetDir(datasetid)
+    ds.mkdir(parents=True,exist_ok=True)
+    dat.to_csv(ds / filename, index=False)
 
 
 

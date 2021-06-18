@@ -3,24 +3,8 @@ import json
 from pathlib import Path
 from pysradb.sraweb import SRAweb
 
-################################
-#The config file is either in the current directory, or HOME
-def getCellbusterConfig():
-    p=Path(".") / "cellbuster.json"
-    if p.is_file():
-        with open(p) as f:
-            return json.load(f)
-    HOME = os.getenv('HOME')
-    if not HOME is None:
-        p=Path(HOME) / ".cellbuster.json"
-        if p.is_file():
-            with open(p) as f:
-                return json.load(f)
-    return {
-        "localrepo":"./repo",
-        "tempdir":"./temp"
-    }
 
+import config
 
 
 def prefetch(ids, outdir):
@@ -43,7 +27,6 @@ def convertIDtoSRP(id: str):
         raise Exception("Don't know how to interpret ID "+id)
 
 def getCleanMetadataFromSRA(id: str):
-
     id_srp = convertIDtoSRP(id)
     sradb = SRAweb()
     df = sradb.sra_metadata(id_srp, detailed=True)
@@ -64,9 +47,9 @@ def getCleanMetadataFromSRA(id: str):
 #For testing
 def main():
 
-    conf = getCellbusterConfig()
-    tempdir = str(Path(conf["tempdir"]))
-    
+    conf = config.getCellbusterConfig()
+    tempdir = str(config.getTempDir())
+
     print(tempdir)
 
     #print(getCellbusterConfig())
@@ -86,6 +69,7 @@ def main():
         command = "gzip " + tempdir + "/*fastq > " + outdir + "/"
         output = subprocess.call(command, shell = True )
         print(output)
+
 
 if __name__ == "__main__":
     main()

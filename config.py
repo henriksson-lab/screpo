@@ -16,7 +16,8 @@ def getCellbusterConfig():
             with open(p) as f:
                 return json.load(f)
     return {
-        "localrepo":"./repo"
+        "localrepo":"./repo",
+        "tempdir":"./temp"
     }
 
 
@@ -26,6 +27,14 @@ def getDatasetDir(datasetid):
     conf = getCellbusterConfig()
     return Path(conf["localrepo"]) / datasetid
 
+
+################################
+#Get temporary directory
+def getTempDir():
+    conf = getCellbusterConfig()
+    tempdir = Path(conf["tempdir"]) 
+    tempdir.mkdir(parents=True, exist_ok=True)
+    return tempdir
 
 ################################
 # Get settings for a single dataset... can also all sorts of stuff, like download status
