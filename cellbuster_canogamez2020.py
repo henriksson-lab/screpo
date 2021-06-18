@@ -9,6 +9,19 @@ import util
 
 ################################
 # Download the data
+def downloadCanogamez_notused():
+    conf = config.getCellbusterConfig()
+    datasetid = "canogamez2020"
+    datasetdir = config.getDatasetDir(datasetid)
+    egadir = datasetdir / "ega"
+    egadir.mkdir(parents=True, exist_ok=True)
+
+    util.downloadEGA("EGAF00002554987D",egadir)
+
+
+
+################################
+# Download the data
 def downloadCanogamez():
     datasetid = "canogamez2020"
     datasetdir = config.getDatasetDir(datasetid)
