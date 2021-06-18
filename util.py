@@ -1,16 +1,18 @@
 from typing import List, Optional, NamedTuple
 
-import requests
-import sys
 import urllib
 import subprocess
-import pandas as pd
 from pathlib import Path
-from io import StringIO
 from tqdm import tqdm
 import shutil
 
 import config
+
+
+################################
+# Check if a variable is NaN (works on any type)
+def isNaN(num):
+    return num != num
 
 
 ################################
@@ -31,7 +33,8 @@ def bamToFastq(bamfile, outfile_r1, outfile_r2):
 ################################   TODO!!!!!!!!!!!!!!!
 # Merge and split
 def mergeAndWriteSplitFastq(infiles: List[str], outfile_r1: Path, outfile_r2: Path):
-    cmd = 'samtools cat ' + " ".join(infiles) + ' | samtools fastq -0 /dev/null -s /dev/null -n -c 1' \
+    infiles = [str(x) for x in infiles]
+    cmd = 'samtools cat ' + " ".join(infiles) + ' | samtools fastq - -0 /dev/null -s /dev/null -n -c 1' \
         ' -1 ' + str(outfile_r1) + ' -2 ' + str(outfile_r2)
     print(cmd)
     subprocess.Popen(['sh', '-c',cmd], stdout=subprocess.PIPE).communicate()
@@ -52,6 +55,8 @@ def smartmergeFilesFor10x(datasetdir, table):
         path_r1 = dir10x / s / (s + "_S1_L001_R1_001.fastq.gz")
         path_r2 = dir10x / s / (s + "_S1_L001_R2_001.fastq.gz")
         (dir10x / s).mkdir(parents=True, exist_ok=True)
+
+        # TODO are the files BAM or CRAM? if fastq, need other tools for merging
 
         # Process files
         mergeAndWriteSplitFastq(listfiles, path_r1, path_r2)

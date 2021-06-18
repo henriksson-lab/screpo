@@ -1,59 +1,77 @@
-from typing import List, Optional, NamedTuple
-
 import requests
-import sys
-import urllib
-import subprocess
 import pandas as pd
-from pathlib import Path
 from io import StringIO
-from tqdm import tqdm
-import shutil
+from pathlib import Path
 
-import config
+import util
 
-import enaBrowserTools.enaDataGet
+################################
+# Download ERR to a file; return path to the file
+def downloadEnaERR(id_err: str, tempdir: Path) -> Path:
+    # Read metadata
+    r = requests.get(
+        "https://www.ebi.ac.uk/ena/portal/api/filereport?accession="+id_err+"&result=read_run&fields=study_accession,sample_accession,experiment_accession,run_accession,tax_id,scientific_name,fastq_ftp,submitted_ftp,sra_ftp&format=tsv&download=true"
+    ).content.decode('utf-8')
+    df = pd.read_csv(StringIO(r), sep="\t")
 
-#######################################################
-#######################################################
-#all metadata
-#curl -v "https://trace.ncbi.nlm.nih.gov/Traces/sra/sra.cgi?save=efetch&db=sra&rettype=runinfo&term=SRP312953"
-#including column "Run" looking like SRR14121712
-#######################################################
-#######################################################
+    # The different possible links
+    url_submitted = df["submitted_ftp"].iloc[0]
+    url_fastq = df["fastq_ftp"].iloc[0]
+    url_sra = df["sra_ftp"].iloc[0]
 
+    # Of the different links, which one to use?
+    if not util.isNaN(url_submitted):
+        url = url_submitted
+    elif not util.isNaN(url_fastq):
+        url = url_fastq
+    elif not util.isNaN(url_sra):
+        raise Exception("The data is only available at SRA; "+url_sra)
+    else:
+        raise Exception("No data for "+id_err)
 
-def getRunInfo(id):
-    r = requests.get('https://trace.ncbi.nlm.nih.gov/Traces/sra/sra.cgi?save=efetch&db=sra&rettype=runinfo&term='+id).content.decode('utf-8')
-    return pd.read_csv(StringIO(r), sep=",")
+    # What should the downloaded filename be?
+    fname = url.split("/")[-1]
 
-print(getRunInfo("SRP312953"))
+    # Assume http if nothing else stated
+    if not "://" in url:
+        url = "http://"+url
 
-##################################################
+    # Get the file
+    downloaded_file = tempdir / fname
+    util.download_url(url, downloaded_file)
 
-#curl -v "https://trace.ncbi.nlm.nih.gov/Traces/sra/sra.cgi?save=efetch&db=sra&rettype=runinfo&term=SRR000001"
-
-### from ena, assume we want get ERR3510662
-
-## conda install enaBrowserTools
-
-#https://www.ebi.ac.uk/ena/browser/api/xml/<accession>
-
-
-#enaBrowserTools.enaDataGet.enaget_main(["-f","fastq","SRR14121712"])
-#enaBrowserTools.enaDataGet.enaget_main(["ena SRR14121712 -f fastq"])
-
-
-
-#enaDataGet -f fastq -d <destination/directory> ERR164409
-
-
-#wget "https://www.ebi.ac.uk/ena/browser/api/xml/ERR3510662"
-#wget "https://www.ebi.ac.uk/ena/portal/api/filereport?accession=ERR3510662&result=read_run&fields=run_accession,submitted_ftp,submitted_md5,submitted_bytes,submitted_format"
-#wget "ftp.sra.ebi.ac.uk/vol1/run/ERR351/ERR3510662/SM1_S1_L004.bam"
+    return downloaded_file
 
 
-########################################################
-# assume we have the id "ERS2852885" --- now what?
+
+
+def main():
+    util.fake_download = True
+    tempdir = util.getTempDir()
+    fname = downloadEnaERR("ERR2854359", tempdir)
+    print(fname)
+
+    df=pd.DataFrame(data={
+        "_filename":[fname],
+        "_10xsampleid":["ERR2854359"]})
+
+    util.smartmergeFilesFor10x(tempdir, df)
+
+if __name__ == "__main__":
+    main()
+
+
+#E-MTAB-7316
+#https://www.ebi.ac.uk/arrayexpress/experiments/E-MTAB-7316/
+#could be nice to start from PRJEB29298  sometimes
+#https://www.ebi.ac.uk/ena/browser/view/ERR2854359
+
+
+
+################################
+# Given column _filename and _10xsampleid, figure out which files should be merged and/or converted to 10x-suitable format.
+# Perform the ops and put them in the right place
+#def smartmergeFilesFor10x(datasetdir, table):
+#_filename, _10xsampleid
 
 

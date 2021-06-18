@@ -1,12 +1,11 @@
 import requests
-import sys
 import pandas as pd
 from io import StringIO
-
 
 import data
 import util
 import config
+import ena
 
 ################################
 # Download one dataset from ArrayExpress
@@ -36,58 +35,35 @@ def downloadAE(datasetid: str):
         else:
             return c
 
+    data.writeDatasetDF(datasetid, df, "samplemeta.csv.ae")
     print(df)
-
-    #Clean up metadata
-    subcond = df[[x for x in df.columns if keepColumn(x)]]
-    subcond = subcond.rename(cleanColumnName, axis='columns')
-    print(subcond)
 
     #Write metadata
     #data.writeDatasetMeta(datasetid, df)
     #data.writeDatasetMeta(datasetid, subcond)
-    subcond=cond[["experimental_condition","cell_type","time_point"]].copy()
-    subcond["_10xsampleid"] = cond["sample_id"]
+    subcond = df[[x for x in df.columns if keepColumn(x)]]
+    subcond = subcond.rename(cleanColumnName, axis='columns')
+    #subcond=cond[["experimental_condition","cell_type","time_point"]].copy()
+    #subcond["_10xsampleid"] = subcond["sample_id"]
     subcond_red=subcond.drop_duplicates()
     data.writeDatasetMeta(datasetid, subcond_red)
 
+    #Clean up metadata
+    print(subcond)
+
+
+    #Download the files
+    ena_samples = df['Comment[ENA_SAMPLE]']  #ERR records that we want
     list_sampleid = df["Source Name"]
-
-
-    list_file_r1=['ftp://ftp.ebi.ac.uk/pub/databases/microarray/data/experiment/MTAB/'+datasetid+'/'+x for x in df['Comment[read1 file]'].tolist()]
-    list_file_r2=['ftp://ftp.ebi.ac.uk/pub/databases/microarray/data/experiment/MTAB/'+datasetid+'/'+x for x in df['Comment[read2 file]'].tolist()]
-    list_file_i1=['ftp://ftp.ebi.ac.uk/pub/databases/microarray/data/experiment/MTAB/'+datasetid+'/'+x for x in df['Comment[index1 file]'].tolist()]
-
-    #if we download from ENA, can learn from here:
-    #https://github.com/ebi-gene-expression-group/atlas-fastq-provider/blob/develop/atlas-fastq-provider-functions.sh
-
+    tempdir = util.getTempDir()
     for i in range(0,len(df.index)):
-        print(i)
-        #download_one10x("tofolder", list_file_r1[i], list_file_r2[i], list_file_i1[i])
-
-        s=list_sampleid[i]
-        dir10x = datasetdir / "rawfq"
-        path_r1 = dir10x / s / (s+"_S1_L001_R1_001.fastq.gz")
-        path_r2 = dir10x / s / (s+"_S1_L001_R2_001.fastq.gz")
-        (dir10x / s).mkdir(parents=True,exist_ok=True)
-
-        util.download_url(list_file_r1[i], path_r1)
-        util.download_url(list_file_r2[i], path_r2)
-
-        #TODO but what to do if there are multiple files per sample? multiple lanes?
-
-
-
-
-################################
-#
-#def download_one10x(tofolder, file_r1, file_r2, file_i1):
-#    print(file_r1)
-#    util.download_url(file_r1, "/tmp/test")
-
-#what files there are:
-#https://www.ebi.ac.uk/arrayexpress/experiments/E-MTAB-7316/files/
-#https://www.ebi.ac.uk/arrayexpress/files/E-MTAB-7316/E-MTAB-7316.sdrf.txt
+        fname = ena.downloadEnaERR(ena_samples[i], tempdir)
+        print(fname)
+        df = pd.DataFrame(data={
+            "_filename": [fname],
+            "_10xsampleid": [list_sampleid[i]})
+        util.smartmergeFilesFor10x(tempdir, df)
+        #TODO this does not use the fact that there may be multiple files
 
 
 
