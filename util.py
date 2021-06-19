@@ -1,10 +1,13 @@
 from typing import List, Optional, NamedTuple
 
+import json
 import urllib
 import subprocess
 from pathlib import Path
 from tqdm import tqdm
 import shutil
+from tempfile import gettempdir
+import os
 
 import config
 
@@ -134,3 +137,26 @@ def downloadEGA(id: str, outdir: Path):
         egaconf = conf["pyega3config"]
 
     subprocess.call(["pyega3", "--saveto", outdir, "--delete-temp-files", "-cf", egaconf, "fetch", id], shell=True)
+
+
+
+################################
+# Create a new temporary directory. Should only be used for small files.
+# Delete after use
+def createSystemTempDir() -> Path:
+    tmp = os.path.join(gettempdir(), '.{}'.format(hash(os.times())))
+    os.makedirs(tmp)
+    return Path(tmp)
+
+
+
+################################
+# Nicely print JSON on screen
+def prettyPrintJSON(dat):
+    print(json.dumps(dat, indent=4, sort_keys=True))
+
+
+################################
+# Turn [[...]] into [...]
+def flatten(t):
+    return [item for sublist in t for item in sublist]

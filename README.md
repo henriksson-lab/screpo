@@ -9,10 +9,14 @@ Who you gonna call.......?
 
 * EBI ArrayExpress
 * EBI GXA
-* GEO
-* SRA
-* HCA  --- soon!
-* EGA  --- limited
+* NCBI GEO
+* NCBI SRA
+* Human Cell Atlas (HCA)
+* European Genome-phenome Archive (EGA)  [wip]
+
+Only 10x datasets can be retrieved as of now; other single cell datasets are
+too non-standardized to be within the scope of this tool.
+
 
 ==Installation==
 

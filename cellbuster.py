@@ -10,6 +10,7 @@ import urllib
 # Dataset managers. Later on we should move to a proper plugin system
 import cellbuster_canogamez2020
 import cellbuster_ae
+import cellbuster_hca
 
 
 ################################
@@ -21,6 +22,7 @@ list_of_datasets = {
 
 def lazyloadDatasets():
     cellbuster_ae.populateListOfDatasets(list_of_datasets)
+    cellbuster_hca.populateListOfDatasets(list_of_datasets)
 
 ################################
 # Should likely be moved

@@ -6,6 +6,9 @@ import data
 import util
 import config
 import ena
+import gxa
+
+
 
 ################################
 # Download one dataset from ArrayExpress
@@ -82,8 +85,15 @@ class LoaderAE:
         self.desc=desc
 
     def download(self):
-        downloadAE(self.datasetid)
 
+
+        if "E-MTAB" in self.datasetid:
+            downloadAE(self.datasetid)
+        else:
+            ids = gxa.getGXAsourceIDs(self.datasetid)
+            print("This ID refers to modified data; instead, obtain from the source using any of these IDs:")
+            print(ids)
+            print("A very long ID is likely HCA; refer to these as e.g. HCA-aab80553-7551-4a9d-becf-68b238d21087")
 
 
 ################################
@@ -110,6 +120,7 @@ def populateListOfDatasets(list_of_datasets):
 
 
 
+################################
 #for testing
 def main():
     util.fake_download=True
