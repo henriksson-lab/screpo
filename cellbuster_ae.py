@@ -55,15 +55,22 @@ def downloadAE(datasetid: str):
     #Download the files
     ena_samples = df['Comment[ENA_SAMPLE]']  #ERR records that we want
     list_sampleid = df["Source Name"]
-    tempdir = util.getTempDir()
+    tempdir = config.getTempDir()
     for i in range(0,len(df.index)):
         fname = ena.downloadEnaERR(ena_samples[i], tempdir)
         print(fname)
-        df = pd.DataFrame(data={
-            "_filename": [fname],
-            "_10xsampleid": [list_sampleid[i]})
-        util.smartmergeFilesFor10x(tempdir, df)
+        if ".bam" in str(fname):
+            df = pd.DataFrame(data={
+                "_filename": [fname],
+                "_10xsampleid": [list_sampleid[i]]
+            })
+            util.smartmergeFilesFor10x(tempdir, df)
+        elif ".fastq" in str(fname) or ".fq" in str(fname):
+            util.moveFASTQto10x(datasetdir, fname, list_sampleid[i])
+        else:
+            raise Exception("Don't know how to deal with file "+fname)
         #TODO this does not use the fact that there may be multiple files
+
 
 
 
@@ -86,15 +93,15 @@ def populateListOfDatasets(list_of_datasets):
     r = requests.get('https://www.ebi.ac.uk/gxa/sc/json/experiments')
     dat = r.json()
 
-    set_10x_tech=set(["10x5prime","10xv2","10xv3"])
+    set_10x_tech = {"10x5prime", "10xv2", "10xv3"}
 
     for exp in dat["experiments"]:
-        expid=exp["experimentAccession"]
-        expdesc=exp["experimentDescription"]
-        cellcount=exp["numberOfAssays"]
+        expid = exp["experimentAccession"]
+        expdesc = exp["experimentDescription"]
+        cellcount = exp["numberOfAssays"]
 
         #Only look at human for now. Also need to be MTAB
-        if exp["species"]=="Homo sapiens" and "E-MTAB" in expid:
+        if exp["species"]=="Homo sapiens":# and "E-MTAB" in expid:
 
             #Only consider 10x technologies
             if len(set_10x_tech.intersection(set(exp["technologyType"])))>0:

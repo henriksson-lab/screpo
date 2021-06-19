@@ -32,7 +32,7 @@ def getDatasetDir(datasetid):
 #Get temporary directory
 def getTempDir():
     conf = getCellbusterConfig()
-    tempdir = Path(conf["tempdir"]) 
+    tempdir = Path(conf["tempdir"])
     tempdir.mkdir(parents=True, exist_ok=True)
     return tempdir
 
@@ -60,14 +60,11 @@ def setDatasetConfig(datasetid, configdata):
 
 
 
+
+
+
+
 ################################
-# Get a path to the count file, .h5d
-def getDatasetCounts(datasetid):
-    print(666)
-
-
-
-
 #For testing
 def main():
     #print(getCellbusterConfig())

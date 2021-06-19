@@ -26,11 +26,10 @@ def mergeBAM(infiles, outfile, outformat="BAM"):
 # One bam split into two fastq.gz
 def bamToFastq(bamfile, outfile_r1, outfile_r2):
     subprocess.call(
-        ["samtools", "fastq", "-c", "6", "-1", outfile_r1, "-2", outfile_r2, "-0", "/dev/null", "-s", "/dev/null",
-         "-n"])
+        ["samtools", "fastq", "-c", "6", "-1", outfile_r1, "-2", outfile_r2, "-0", "/dev/null", "-s", "/dev/null", "-n"])
 
 
-################################   TODO!!!!!!!!!!!!!!!
+################################
 # Merge and split
 def mergeAndWriteSplitFastq(infiles: List[str], outfile_r1: Path, outfile_r2: Path):
     infiles = [str(x) for x in infiles]
@@ -43,7 +42,7 @@ def mergeAndWriteSplitFastq(infiles: List[str], outfile_r1: Path, outfile_r2: Pa
 ################################
 # Given column _filename and _10xsampleid, figure out which files should be merged and/or converted to 10x-suitable format.
 # Perform the ops and put them in the right place
-def smartmergeFilesFor10x(datasetdir, table):
+def smartmergeFilesFor10x(datasetdir: Path, table):
     dir10x = datasetdir / "rawfq"
     listsamples = set(table["_10xsampleid"].tolist())
     for s in listsamples:
@@ -60,6 +59,26 @@ def smartmergeFilesFor10x(datasetdir, table):
 
         # Process files
         mergeAndWriteSplitFastq(listfiles, path_r1, path_r2)
+
+
+################################
+# Move a FASTQ-file to where it should be within a 10x directory structure
+def moveFASTQto10x(datasetdir: Path, fname: Path, samplename: str):
+    #"ftp.sra.ebi.ac.uk/vol1/fastq/SRR110/075/SRR11008275/SRR11008275_1.fastq.gz"
+
+    if any([x in str(fname) for x in ["_1.fastq.gz","_R1.fastq.gz","_1.fq.gz","_R1.fq.gz"]]):
+        new_fname = dir10x / samplename / (samplename + "_S1_L001_R1_001.fastq.gz")
+    elif any([x in str(fname) for x in ["_2.fastq.gz", "_R2.fastq.gz", "_2.fq.gz", "_R2.fq.gz"]]):
+        new_fname = dir10x / samplename / (samplename + "_S1_L001_R2_001.fastq.gz")
+    elif any([x in str(fname) for x in ["_I1.fastq.gz", "_I1.fq.gz"]]):
+        new_fname = dir10x / samplename / (samplename + "_S1_L001_I1_001.fastq.gz")
+    else:
+        raise Exception("Do not now how to rename "+str(fname))
+
+    dir10x = datasetdir / "rawfq"
+    (dir10x / s).mkdir(parents=True, exist_ok=True)
+    fname.rename(new_fname)
+
 
 
 ################################
