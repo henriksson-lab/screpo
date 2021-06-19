@@ -70,17 +70,17 @@ A quick guide to database IDs
 
 This table might help you navigate the way-too-many accession systems out there
 
-== GEO namespace ==
-GSE*    An expression dataset such as https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE114530
-GSM*
+== GEO namespace
+* GSE*    An expression dataset such as https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE114530
+* GSM*
 
-== SRA namespace ==
-SRP*    A sequencing project, https://www.ncbi.nlm.nih.gov/sra?term=SRP147554
-SRX*    An experiment, corresponds to GSM*,  https://www.ncbi.nlm.nih.gov/sra/SRX5126514[accn]
-SRR*    A sequencing run
-SRS*    A sample
+== SRA namespace
+* SRP*    A sequencing project, https://www.ncbi.nlm.nih.gov/sra?term=SRP147554
+* SRX*    An experiment, corresponds to GSM*,  https://www.ncbi.nlm.nih.gov/sra/SRX5126514[accn]
+* SRR*    A sequencing run
+* SRS*    A sample
 
-== Bioproject ==
-PRJNA*  https://www.ncbi.nlm.nih.gov/bioproject/PRJNA471694
-SAMN*   corresponds to SRS*
+== Bioproject 
+* PRJNA*  https://www.ncbi.nlm.nih.gov/bioproject/PRJNA471694
+* SAMN*   corresponds to SRS*
 
