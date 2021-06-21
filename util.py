@@ -160,3 +160,8 @@ def prettyPrintJSON(dat):
 # Turn [[...]] into [...]
 def flatten(t):
     return [item for sublist in t for item in sublist]
+
+
+def anyin(liststring: List[str], target: str):
+    return any([s in target for s in liststring])
+

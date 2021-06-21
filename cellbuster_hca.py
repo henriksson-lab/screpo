@@ -25,7 +25,7 @@ import util
 # Map from cellbuster ID to HCA id
 def toHCAprojid(project_uuid: str):
     if "HCA-" in project_uuid:
-        project_uuid = project_uuid.replace("HCA-")
+        project_uuid = project_uuid.replace("HCA-","")
     return project_uuid
 
 
@@ -62,6 +62,8 @@ def getFileListForProject(project_uuid: str) -> List[Tuple[str, str]]:
     })
     dat = r.json()
 
+    # util.prettyPrintJSON(dat)
+
     # Extract files from all "hits"
     list_files = []
     for hit in dat["hits"]:
@@ -69,8 +71,9 @@ def getFileListForProject(project_uuid: str) -> List[Tuple[str, str]]:
 
     # Obtain list of raw data files. These are normally fastq.gz it seems.
     # Only return (file name, URL)
-    list_files = [f for f in list_files if "DNA sequence (raw)" in f["content_description"]]
+    list_files = [f for f in list_files if util.anyin(["DNA sequence"],f["content_description"])]
     list_files = [(f["name"], f["url"]) for f in list_files]
+
     return list_files
 
 
@@ -101,15 +104,13 @@ def getListProjects():
         list_protocols = util.flatten([prot["libraryConstructionApproach"] for prot in h["protocols"] if "libraryConstructionApproach" in prot])
 
         # Figure out what title to designate this dataset; it can be in multiple?
-        list_titles=[p["projectTitle"] for p in h["projects"]]
-        if len(list_titles)>0:
-            title=list_titles[0]
-        else:
-            title=""
+        title=[p["projectTitle"] for p in h["projects"]][0]
+        shortTitle=[p["projectShortname"] for p in h["projects"]][0]  # could use this as an id instead?
 
         list_projects.append({
             "id":projid,
             "title":title,
+            "shortname":shortTitle,
             "protocols":list_protocols
         })
     return list_projects
@@ -118,6 +119,40 @@ def getListProjects():
 def printListProjects():
     for p in getListProjects():
         print(p["id"] + "\t" + p["title"] + " ("+",".join(p["protocols"])+")")
+
+
+
+
+
+
+
+
+
+
+
+################################
+# Container of all functions related to AE
+class LoaderHCA:
+    def __init__(self, meta):
+        self.datasetid=meta["id"]
+        self.meta=meta
+        self.desc=meta["title"] + " ("+",".join(meta["protocols"])+")"
+        # self.datasetid=meta["id"]
+
+    def download(self):
+        print(666)
+        #downloadAE(self.datasetid)
+
+
+################################
+# Figure out what datasets can be downloaded
+def populateListOfDatasets(list_of_datasets):
+    for p in getListProjects():
+        if any(["10X" in protname for protname in p["protocols"]]):
+            list_of_datasets[p["id"]] = LoaderHCA(p)
+            #p["id"], p["title"] + " ("+",".join(p["protocols"])+")")
+
+
 
 
 
@@ -131,28 +166,15 @@ def printListProjects():
 
 #printListProjects()
 
+files = getFileListForProject("HCA-992aad5e-7fab-46d9-a47d-df715e8cfd24")
+
+
+def isProper10xNamed(fname: str):
+    666
+    "run231_187_S6_L003_R1_001.fastq.gz"
+    # Proper format: https://support.10xgenomics.com/single-cell-gene-expression/software/pipelines/latest/using/fastq-input
+
+    # {library}_S{s}_L{lane}_R{r}_001.fastq.gz
 
 
 
-
-
-
-
-################################
-# Container of all functions related to AE
-class LoaderHCA:
-    def __init__(self, datasetid, desc):
-        self.datasetid=datasetid
-        self.desc=desc
-
-    def download(self):
-        print(666)
-        #downloadAE(self.datasetid)
-
-
-################################
-# Figure out what datasets can be downloaded
-def populateListOfDatasets(list_of_datasets):
-    for p in getListProjects():
-        if any(["10X" in protname for protname in p["protocols"]]):
-            list_of_datasets[p["id"]] = LoaderHCA(p["id"], p["title"] + " ("+",".join(p["protocols"])+")")
