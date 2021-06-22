@@ -66,6 +66,7 @@ def main():
         command = "fasterq-dump " + "--split-files --threads 16 --outdir " + tempdir + " " + run_id
         print(command)
         output = subprocess.call(command, cwd = tempdir + "/..", shell = True )
+        print("exit status")
         print(output)
         if output == 0:
             command = "gzip " + tempdir + "/*fastq"
