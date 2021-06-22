@@ -29,6 +29,14 @@ def renaming_sra(file1,file2):
     print(read_file1)
     print("read_file2")
     print(read_file2)
+
+    if read_file1 == "1":
+        os.rename(file1,(file1.split("_")[0]).split(".")[0]+"_R1.fastq.gz")
+        os.rename(file2,(file2.split("_")[0]).split(".")[0]+"_R2.fastq.gz")
+    if read_file1 == "2":
+        os.rename(file2,(file2.split("_")[0]).split(".")[0]+"_R1.fastq.gz")
+        os.rename(file1,(file1.split("_")[0]).split(".")[0]+"_R2.fastq.gz")
+        
     # import pdb; pdb.set_trace()
 
 
