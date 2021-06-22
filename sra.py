@@ -42,8 +42,6 @@ def getCleanMetadataFromSRA(id: str):
     return subcond
 
 
-
-
 #For testing
 def main():
 
@@ -53,25 +51,28 @@ def main():
     print(tempdir)
 
     #print(getCellbusterConfig())
-    metadata = getCleanMetadataFromSRA("GSE171273")
+    metadata = getCleanMetadataFromSRA("GSE144320")
 
 
     outdir = str(list(set(metadata["study_accession"].tolist()))[0])
     run_id_list = metadata["run_accession"].tolist()
+    print(outdir)
+    print(run_id_list)
+    run_id_list = ["dummy_run_id"]
+    # import pdb; pdb.set_trace()
 
     for run_id in run_id_list:
-        command = "mkdir " + outdir  
-        output = subprocess.call(command, shell = True )
 
         command = "fasterq-dump " + "--split-files --threads 16 --outdir " + tempdir + " " + run_id
-        output = subprocess.call(command, shell = True )
-
-        command = "gzip " + tempdir + "/*fastq > " + outdir + "/"
-        output = subprocess.call(command, shell = True )
+        print(command)
+        output = subprocess.call(command, cwd = tempdir + "/..", shell = True )
         print(output)
-
+        if output == 0:
+            command = "gzip " + tempdir + "/*fastq"
+            output = subprocess.call(command, cwd = tempdir + "/..", shell = True )
+            print(command)
+        else:
+            continue
 
 if __name__ == "__main__":
     main()
-
-
