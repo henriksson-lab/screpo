@@ -1,40 +1,48 @@
 #!/usr/bin/env python3
 
-from Bio import SeqIO
-import sys, os, re, gzip
+# from Bio import SeqIO
+import sys, os, shutil, re, gzip
 
 
 def renaming_sra(files):
 
     for file in files:
-        fastq = gzip.open(file, "rt")
+        dir_name = '_'.join(file.split("_")[:2])
 
-        records = SeqIO.parse(fastq, "fastq")
+        if not os.path.exists(dir_name):
+            os.mkdir(dir_name)
 
-        for record in records:
-            name = str(record.name)
-            description = str(record.description)
-            break
+        shutil.move(file,dir_name + "/" + file)
 
-        fastq.close()
-
-        read_file = description.replace(name,"").split(":")[0]
-        read_file = read_file.replace(" ","")
-
-        print(read_file)
-
-        # import pdb; pdb.set_trace()
-
-        if read_file == "1":
-
-            os.rename(file,(file.split("_")[0]).split(".")[0]+"_R1.fastq.gz")
-            print("Read => " + read_file)
-        elif read_file == "3":
-            os.rename(file,(file.split("_")[0]).split(".")[0]+"_R2.fastq.gz")
-            print("Read => " + read_file)
-        else:
-            os.rename(file,(file.split("_")[0]).split(".")[0]+"_I1.fastq.gz")
-            print("Read => " + read_file)
+        # fastq = gzip.open(file, "rt")
+        #
+        # records = SeqIO.parse(fastq, "fastq")
+        #
+        # for record in records:
+        #     name = str(record.name)
+        #     description = str(record.description)
+        #     break
+        #
+        # fastq.close()
+        # print("test")
+        #
+        # read_file = description.replace(name,"").split(":")[0]
+        # read_file = read_file.replace(" ","")
+        #
+        # print(read_file)
+        #
+        # # import pdb; pdb.set_trace()
+        #
+        # if read_file == "1":
+        #
+        #     os.rename(file,(file.split("_")[0]).split(".")[0]+"_R1.fastq.gz")
+        #     print("Read => " + read_file)
+        # elif read_file == "3":
+        #     os.rename(file,(file.split("_")[0]).split(".")[0]+"_R2.fastq.gz")
+        #     print("Read => " + read_file)
+        # else:
+        #     os.rename(file,(file.split("_")[0]).split(".")[0]+"_I1.fastq.gz")
+        #     print("Read => " + read_file)
 
 
 
