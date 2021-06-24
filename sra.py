@@ -34,10 +34,10 @@ def input_dir_tree(files):
     for file in files:
         dir_name = '_'.join(file.split("_")[:2])
 
-        if not os.path.exists(dir_name):
-            os.mkdir(dir_name)
+        if not os.path.exists(tempdir + "/" + dir_name):
+            os.mkdir(tempdir + "/" + dir_name)
 
-        shutil.move(file,dir_name + "/" + file)
+        shutil.move(file,tempdir + "/" + dir_name + "/" + file)
 
 
 def download_geo(geo_id):
