@@ -1,20 +1,8 @@
+import os, shutil
 import subprocess
-import json
-from pathlib import Path
 from pysradb.sraweb import SRAweb
-
-
 import config
 
-
-def prefetch(ids, outdir):
-    subprocess.call(["prefetch", "--output-directory", outdir]+ids, shell=True)
-
-def fasterqDumpSplit():
-    subprocess.call(["fasterq-dump", "--output-directory", outdir]+ids, shell=True)
-
-def prefetch(ids, outdir):
-    subprocess.call(["prefetch", "--output-directory", outdir]+ids, shell=True)
 
 def convertIDtoSRP(id: str):
     if id.startswith("SRP"):
@@ -41,25 +29,32 @@ def getCleanMetadataFromSRA(id: str):
     subcond = subcond[[x for x in subcond.columns if keepColumn(x)]]
     return subcond
 
+def input_dir_tree(files):
 
-#For testing
-def main():
+    for file in files:
+        dir_name = '_'.join(file.split("_")[:2])
+
+        if not os.path.exists(dir_name):
+            os.mkdir(dir_name)
+
+        shutil.move(file,dir_name + "/" + file)
+
+
+def download_geo(geo_id):
 
     conf = config.getCellbusterConfig()
     tempdir = str(config.getTempDir())
 
     print(tempdir)
 
-    #print(getCellbusterConfig())
-    metadata = getCleanMetadataFromSRA("GSE144320")
+    metadata = getCleanMetadataFromSRA(geo_id)
 
 
     outdir = str(list(set(metadata["study_accession"].tolist()))[0])
     run_id_list = metadata["run_accession"].tolist()
     print(outdir)
     print(run_id_list)
-    run_id_list = ["dummy_run_id"]
-    # import pdb; pdb.set_trace()
+
 
     for run_id in run_id_list:
 
@@ -72,8 +67,10 @@ def main():
             command = "gzip " + tempdir + "/*fastq"
             output = subprocess.call(command, cwd = tempdir + "/..", shell = True )
             print(command)
-        else:
-            continue
+
+    files = os.listdir(tempdir)
+    input_dir_tree(files)
 
 if __name__ == "__main__":
-    main()
+    # test GEO ID: "GSE126030"
+    download_geo("GSE126030")
