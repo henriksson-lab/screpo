@@ -32,7 +32,11 @@ def getCleanMetadataFromSRA(id: str):
 def input_dir_tree(files):
 
     for file in files:
-        dir_name = '_'.join(file.split("_")[:2])
+        file_parts = file.split("_")
+        if len(file_parts) > 2:
+            dir_name = '_'.join(file_parts[:2])
+        else:
+            dir_name = file_parts[0]
 
         if not os.path.exists(tempdir + "/" + dir_name):
             os.mkdir(tempdir + "/" + dir_name)
