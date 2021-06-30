@@ -1,3 +1,5 @@
+import re
+
 import requests
 import sys
 import pandas as pd
@@ -11,6 +13,8 @@ import urllib
 import cellbuster_canogamez2020
 import cellbuster_ae
 import cellbuster_hca
+import re
+import sra
 
 
 ################################
@@ -34,8 +38,11 @@ def runCellRanger(datasetid,localcores=8,expectcells=5000):
 ################################
 # Download a dataset
 def download(datasetid):
-    lazyloadDatasets()
-    list_of_datasets[datasetid].download()
+    if re.search('^G', datasetid, re.IGNORECASE):
+        sra.download_geo(datasetid)
+    else:
+        lazyloadDatasets()
+        list_of_datasets[datasetid].download()
 
 
 ################################
