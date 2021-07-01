@@ -1,4 +1,4 @@
-CellBuster - a framework for single-cell raw data retrieval and reprocessing
+sCellBuster - a framework for single-cell raw data retrieval and reprocessing
 ============================================================================
 
 Do you want to reanalyze some previous single-cell data? Is the data in a database
@@ -55,14 +55,16 @@ See https://opensource.org/licenses/BSD-2-Clause
 
 ==Authors==
 
-* Johan Henriksson
-* Debojyoti Das
+* Debojyoti Das <debojyoti.das@umu.se>
+* Johan Henriksson <johan.henriksson@umu.se>
+
+See also our lab website: http://www.henlab.org/
 
 ==Cite==
 
 Not required but much appreciated! It motivates us to keep developing tools like this one:
 
-TODO
+TODO (for now, link to our github repo)
 
 
 A quick guide to database IDs

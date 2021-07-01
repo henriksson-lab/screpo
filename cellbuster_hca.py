@@ -166,12 +166,12 @@ def populateListOfDatasets(list_of_datasets):
 
 #printListProjects()
 
-files = getFileListForProject("HCA-992aad5e-7fab-46d9-a47d-df715e8cfd24")
-
+#files = getFileListForProject("HCA-992aad5e-7fab-46d9-a47d-df715e8cfd24")
 
 def isProper10xNamed(fname: str):
     666
     "run231_187_S6_L003_R1_001.fastq.gz"
+
     # Proper format: https://support.10xgenomics.com/single-cell-gene-expression/software/pipelines/latest/using/fastq-input
 
     # {library}_S{s}_L{lane}_R{r}_001.fastq.gz
