@@ -1,0 +1,6 @@
+Source Name,organism,developmental stage,individual,replicate,sex,disease,organism part,Extract Name,library construction,LIBRARY_STRATEGY,Assay Name,replicate
+Retina 1,Homo sapiens,adult,Donor 1 [17-010],5,female,normal,retina,Retina 1,10xV2,OTHER,Retina 1,5
+Retina 2A,Homo sapiens,adult,Donor 2 [SC],3,male,normal,retina,Retina 2A,10xV2,OTHER,Retina 2A,3
+Retina 2B,Homo sapiens,adult,Donor 2 [SC],4,male,normal,retina,Retina 2B,10xV2,OTHER,Retina 2B,4
+Retina 3A,Homo sapiens,adult,Donor 3 [17-011],1,female,normal,retina,Retina 3A,10xV2,OTHER,Retina 3A,1
+Retina 3B,Homo sapiens,adult,Donor 3 [17-011],2,female,normal,retina,Retina 3B,10xV2,OTHER,Retina 3B,2

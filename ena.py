@@ -41,7 +41,7 @@ def downloadEnaERR(id_err: str, tempdir: Path) -> Path:
             url = "http://"+url
 
         # Get the file
-        downloaded_file = tempdir / fname
+        downloaded_file = str(tempdir / fname)
         util.download_url(url, downloaded_file)
         list_files.append(downloaded_file)
 
@@ -55,7 +55,7 @@ def downloadEnaERR(id_err: str, tempdir: Path) -> Path:
 ################################
 # For testing
 def main():
-    util.fake_download = True
+    util.fake_download = False
     tempdir = util.getTempDir()
     fnames = downloadEnaERR("ERR2854359", tempdir)
     print(fnames)

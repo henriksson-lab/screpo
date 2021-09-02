@@ -35,7 +35,8 @@ def bamToFastq(bamfile, outfile_r1, outfile_r2):
 ################################
 # Merge and split
 def mergeAndWriteSplitFastq(infiles: List[str], outfile_r1: Path, outfile_r2: Path):
-    infiles = [str(x) for x in infiles]
+    infiles = [str(x[0]) for x in infiles]
+    print(type(infiles))
     cmd = 'samtools cat ' + " ".join(infiles) + ' | samtools fastq - -0 /dev/null -s /dev/null -n -c 1' \
         ' -1 ' + str(outfile_r1) + ' -2 ' + str(outfile_r2)
     print(cmd)
@@ -52,6 +53,7 @@ def smartmergeFilesFor10x(datasetdir: Path, table):
         print("Getting and processing files for sample " + s)
         listfiles = table[table["_10xsampleid"] == s]["_filename"].tolist()
 
+        s = s.replace(" ","_")
         # What should the final files be called?
         # See here for reference: https://support.10xgenomics.com/single-cell-gene-expression/software/pipelines/latest/using/fastq-input
         path_r1 = dir10x / s / (s + "_S1_L001_R1_001.fastq.gz")
