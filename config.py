@@ -5,16 +5,18 @@ from pathlib import Path
 ################################
 #The config file is either in the current directory, or HOME
 def getCellbusterConfig():
-    p=Path(".") / "cellbuster.json"
-    if p.is_file():
-        with open(p) as f:
-            return json.load(f)
+    #First check the home folder
     HOME = os.getenv('HOME')
     if not HOME is None:
         p=Path(HOME) / ".cellbuster.json"
         if p.is_file():
             with open(p) as f:
                 return json.load(f)
+    #Check current directory as secondary
+    p=Path(".") / "cellbuster.json"
+    if p.is_file():
+        with open(p) as f:
+            return json.load(f)
     return {
         "localrepo":"./repo",
         "tempdir":"./temp"

@@ -4,7 +4,6 @@
 	"Mus_musculus":"/sw/data/Chromium/cellranger-data/2020-A/refdata-gex-mm10-2020-A"
 },
 "localrepo":"/corgi/cellbuster/",
-"pyega3config":"~/.ega.json"
-},
+"pyega3config":"~/.ega.json",
 "tempdir":"/tmp"
-
+}
