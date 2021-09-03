@@ -2,7 +2,6 @@ import os, sys, re, shutil
 import util
 from fastqfileinfo import fastqinfo
 
-# import pdb;pdb.set_trace()
 
 def organizesampledir():
     tempdir = "/corgi/debojyoti/temp"
