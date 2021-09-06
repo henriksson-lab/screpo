@@ -12,8 +12,6 @@ def organizesampledir():
 
 
     samples = []
-    sampledirs = []
-    samplefiles = []
 
     for file in files:
 
