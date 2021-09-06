@@ -21,8 +21,6 @@ def organizesampledir():
         reqdirname = tempdir + "/" + fileinfo.id
 
         samples.append(fileinfo.id)
-        sampledirs.append(reqdirname)
-        samplefiles.append(reqdirname + "/" + file)
 
         if not os.path.exists(reqdirname):
             os.makedirs(reqdirname)
@@ -62,9 +60,7 @@ def organizesampledir():
                 
 
         table["renamed_file"] = renamed_file
-        print(table)
 
-        import pdb;pdb.set_trace()
         for row in range(table.shape[0]):
             shutil.move(tempdir + "/" + sample + "/" + table["file"].values[row], tempdir + "/" + sample + "/" + table["renamed_file"].values[row])
 
