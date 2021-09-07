@@ -4,6 +4,7 @@ from pysradb.sraweb import SRAweb
 import config
 import random
 import string
+import organizesampledir
 
 ################################
 # If the id is not of type GSE*, try to convert it
@@ -38,22 +39,22 @@ def getCleanMetadataFromSRA(id: str):
 
 ################################
 # Move files to cellranger subdirectories ("samples")
-def input_dir_tree(files, datasetid):
-
-    datasetdir = config.getDatasetDir(datasetid)
-
-    for file in files:
-        file_parts = file.split("_")
-        if len(file_parts) > 2:
-            dir_name = '_'.join(file_parts[:2])
-        else:
-            dir_name = file_parts[0]
-
-        todir = datasetdir / "samples" / dir_name
-        todir.mkdir(parents=True, exist_ok=True)
-
-        shutil.move(file,todir / file)
-
+#def input_dir_tree(files, datasetid):
+#
+#    datasetdir = config.getDatasetDir(datasetid)
+#
+#    for file in files:
+#        file_parts = file.split("_")
+#        if len(file_parts) > 2:
+#            dir_name = '_'.join(file_parts[:2])
+#        else:
+#            dir_name = file_parts[0]
+#
+#        todir = datasetdir / "samples" / dir_name
+#        todir.mkdir(parents=True, exist_ok=True)
+#
+#        shutil.move(file,todir / file)
+#
 
 ################################
 # Download metadata and files from GEO
@@ -94,7 +95,8 @@ def download_geo(geo_id):
             print(command)
 
     files = os.listdir(tempdir)
-    input_dir_tree(files, geo_id)
+    organizesampledir()
+#    input_dir_tree(files, geo_id)
 
 
 
