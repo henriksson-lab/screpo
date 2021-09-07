@@ -4,7 +4,7 @@ from pysradb.sraweb import SRAweb
 import config
 import random
 import string
-import organizesampledir
+from organizesampledir import organizesampledir
 
 ################################
 # If the id is not of type GSE*, try to convert it
@@ -103,4 +103,5 @@ def download_geo(geo_id):
 ###########################################################
 if __name__ == "__main__":
     # test GEO ID: "GSE126030"
+    import pdb;pdb.set_trace()
     download_geo("GSE126030")
