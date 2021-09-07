@@ -36,26 +36,6 @@ def getCleanMetadataFromSRA(id: str):
     subcond = subcond[[x for x in subcond.columns if keepColumn(x)]]
     return subcond
 
-
-################################
-# Move files to cellranger subdirectories ("samples")
-#def input_dir_tree(files, datasetid):
-#
-#    datasetdir = config.getDatasetDir(datasetid)
-#
-#    for file in files:
-#        file_parts = file.split("_")
-#        if len(file_parts) > 2:
-#            dir_name = '_'.join(file_parts[:2])
-#        else:
-#            dir_name = file_parts[0]
-#
-#        todir = datasetdir / "samples" / dir_name
-#        todir.mkdir(parents=True, exist_ok=True)
-#
-#        shutil.move(file,todir / file)
-#
-
 ################################
 # Download metadata and files from GEO
 def download_geo(geo_id):
@@ -103,5 +83,4 @@ def download_geo(geo_id):
 ###########################################################
 if __name__ == "__main__":
     # test GEO ID: "GSE126030"
-    import pdb;pdb.set_trace()
     download_geo("GSE126030")
