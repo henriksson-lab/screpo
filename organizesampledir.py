@@ -39,21 +39,38 @@ def organizesampledir():
         table.sort_values(by = ["read_length"], inplace = True)
 
         renamed_file = []
+
+        rows = table.shape[0]
+
+        if rows == 1 or rows == 2:
+            lanes = 1
+        else:
+            lanes = rows/3
+
+        lane = 1
+
         for ifname, fname in enumerate(table["file"].tolist()):
-            if table.shape[0] == 2:
-                if ifname == 0:
-                    renamed_file.append(fname.split("_")[0] + "_R1.fastq.gz") 
-                else:
-                    renamed_file.append(fname.split("_")[0] + "_R2.fastq.gz") 
-            elif table.shape[0] == 3:
-                if ifname == 0:
-                    renamed_file.append(fname.split("_")[0] + "_I1.fastq.gz") 
-                elif ifname == 1:
-                    renamed_file.append(fname.split("_")[0] + "_R1.fastq.gz") 
-                else:
-                    renamed_file.append(fname.split("_")[0] + "_R2.fastq.gz") 
+            if lanes == 1:
+                lane = 1
             else:
-                    renamed_file.append(fname.split("_")[0] + "_R1.fastq.gz") 
+                if ifname % 3 == 0:
+                    lane = lane + 1
+
+
+            if rows == 2:
+                if ifname == 0:
+                    renamed_file.append(fname.split("_")[0] + "_S1_L00" + str(lane) + "_R1_001.fastq.gz") 
+                else:
+                    renamed_file.append(fname.split("_")[0] + "_S1_L00" + str(lane) + "_R2_001.fastq.gz") 
+            elif rows % 3 == 0:
+                if ifname < lanes:
+                    renamed_file.append(fname.split("_")[0] + "_S1_L00" + str(lane) + "_I1_001.fastq.gz") 
+                elif ifname >= lanes and ifname <= lanes+1:
+                    renamed_file.append(fname.split("_")[0] + "_S1_L00" + str(lane) + "_R1_001.fastq.gz") 
+                else:
+                    renamed_file.append(fname.split("_")[0] + "_S1_L00" + str(lane) + "_R2_001.fastq.gz") 
+            else:
+                    renamed_file.append(fname.split("_")[0] + "_S1_L00" + str(lane) + "_R1_001.fastq.gz") 
 
                 
 
